@@ -265,7 +265,7 @@ class Curl {
 	static hasCurlImpersonateChrome() {
 		if (this._hasCurlImpersonateChrome === undefined) {
 			this._hasCurlImpersonateChrome = spawnSync(getCurlImpersonate(), ['--version']).status === 0;
-			console.log(1111111, getCurlImpersonate(), this._hasCurlImpersonateChrome)
+			// console.log(1111111, getCurlImpersonate(), this._hasCurlImpersonateChrome)
 		}
 		return this._hasCurlImpersonateChrome;
 	}
