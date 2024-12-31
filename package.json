@@ -1,18 +1,21 @@
 {
-  "name": "curl-wrap",
-  "version": "1.0.3",
+  "name": "curl-wrap-ciff",
+  "version": "1.0.1",
   "description": "Nodejs library that wraps curl command line",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hkk12369/curl-wrap.git"
+    "url": "git+https://github.com/darkqiank/curl-wrap-ciff.git"
   },
+    "scripts": {
+      "test": "jest"
+    },
   "author": "Hitesh Khandelwal",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/hkk12369/curl-wrap/issues"
+    "url": "https://github.com/darkqiank/curl-wrap-ciff/issues"
   },
-  "homepage": "https://github.com/hkk12369/curl-wrap#readme",
+  "homepage": "https://github.com/darkqiank/curl-wrap-ciff#readme",
   "keywords": [
     "curl",
     "curl-js",
@@ -24,5 +27,8 @@
   ],
   "dependencies": {
     "tough-cookie": "^5.0.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
   }
 }

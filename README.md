@@ -1,17 +1,17 @@
-# curl-wrap
+# curl-wrap-ciff
 Nodejs library that wraps curl command line
 
 ## Install
 ```sh
-npm install curl-wrap
+npm install curl-wrap-ciff
 # OR
-yarn add curl-wrap
+yarn add curl-wrap-ciff
 ```
 
 ## Usage
 
 ```js
-const {Curl} = require('curl-wrap');
+const {Curl} = require('curl-wrap-ciff');
 
 const response = await Curl.get('https://www.google.com');
 console.log(response.body);

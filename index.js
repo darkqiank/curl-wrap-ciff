@@ -1,11 +1,19 @@
+const path = require('node:path'); // 使用 require 代替 import
 const {spawn, spawnSync} = require('child_process');
 const fs = require('fs/promises');
 const {CookieJar} = require('tough-cookie');
+
+const BINARY_PATH = path.join(__dirname, "bin", process.platform, process.arch);
 
 function getDefaultProxyPort(proxyType) {
 	if (proxyType === 'http') return 80;
 	if (proxyType === 'https') return 443;
 	return 1080;
+}
+
+function getCurlImpersonate() {
+	if (process.platform === 'win32') return path.join(BINARY_PATH, 'chrome-x64.exe');
+	return path.join(BINARY_PATH, 'curl-impersonate-chrome')
 }
 
 /**
@@ -256,21 +264,10 @@ class Curl {
 	 */
 	static hasCurlImpersonateChrome() {
 		if (this._hasCurlImpersonateChrome === undefined) {
-			this._hasCurlImpersonateChrome = spawnSync('curl-impersonate-chrome', ['--version']).status === 0;
+			this._hasCurlImpersonateChrome = spawnSync(getCurlImpersonate(), ['--version']).status === 0;
+			console.log(1111111, getCurlImpersonate(), this._hasCurlImpersonateChrome)
 		}
 		return this._hasCurlImpersonateChrome;
-	}
-
-	/**
-	 * @static
-	 * whether curl-impersonate-ff is available or not
-	 * @see https://github.com/lwthiker/curl-impersonate
-	 */
-	static hasCurlImpersonateFirefox() {
-		if (this._hasCurlImpersonateFirefox === undefined) {
-			this._hasCurlImpersonateFirefox = spawnSync('curl-impersonate-ff', ['--version']).status === 0;
-		}
-		return this._hasCurlImpersonateFirefox;
 	}
 
 	/**
@@ -310,12 +307,12 @@ class Curl {
 	impersonate(browser = 'chrome') {
 		if (browser === 'chrome') {
 			if (this.constructor.hasCurlImpersonateChrome()) {
-				this.cliCommand('curl-impersonate-chrome');
+				this.cliCommand(getCurlImpersonate());
 				this.cliOptions([
 					'--ciphers',
 					'TLS_AES_128_GCM_SHA256,TLS_AES_256_GCM_SHA384,TLS_CHACHA20_POLY1305_SHA256,ECDHE-ECDSA-AES128-GCM-SHA256,ECDHE-RSA-AES128-GCM-SHA256,ECDHE-ECDSA-AES256-GCM-SHA384,ECDHE-RSA-AES256-GCM-SHA384,ECDHE-ECDSA-CHACHA20-POLY1305,ECDHE-RSA-CHACHA20-POLY1305,ECDHE-RSA-AES128-SHA,ECDHE-RSA-AES256-SHA,AES128-GCM-SHA256,AES256-GCM-SHA384,AES128-SHA,AES256-SHA',
 					'--http2',
-					'--http2-no-server-push',
+					// '--http2-no-server-push',
 					'--compressed',
 					'--tlsv1.2',
 					'--alps',
@@ -341,7 +338,7 @@ class Curl {
 		}
 		else if (browser === 'chromeMobile') {
 			if (this.constructor.hasCurlImpersonateChrome()) {
-				this.cliCommand('curl-impersonate-chrome');
+				this.cliCommand(getCurlImpersonate());
 				this.cliOptions([
 					'--ciphers',
 					'TLS_AES_128_GCM_SHA256,TLS_AES_256_GCM_SHA384,TLS_CHACHA20_POLY1305_SHA256,ECDHE-ECDSA-AES128-GCM-SHA256,ECDHE-RSA-AES128-GCM-SHA256,ECDHE-ECDSA-AES256-GCM-SHA384,ECDHE-RSA-AES256-GCM-SHA384,ECDHE-ECDSA-CHACHA20-POLY1305,ECDHE-RSA-CHACHA20-POLY1305,ECDHE-RSA-AES128-SHA,ECDHE-RSA-AES256-SHA,AES128-GCM-SHA256,AES256-GCM-SHA384,AES128-SHA,AES256-SHA',
@@ -370,7 +367,7 @@ class Curl {
 		}
 		else if (browser === 'edge') {
 			if (this.constructor.hasCurlImpersonateChrome()) {
-				this.cliCommand('curl-impersonate-chrome');
+				this.cliCommand(getCurlImpersonate());
 				this.cliOptions([
 					'--ciphers',
 					'TLS_AES_128_GCM_SHA256,TLS_AES_256_GCM_SHA384,TLS_CHACHA20_POLY1305_SHA256,ECDHE-ECDSA-AES128-GCM-SHA256,ECDHE-RSA-AES128-GCM-SHA256,ECDHE-ECDSA-AES256-GCM-SHA384,ECDHE-RSA-AES256-GCM-SHA384,ECDHE-ECDSA-CHACHA20-POLY1305,ECDHE-RSA-CHACHA20-POLY1305,ECDHE-RSA-AES128-SHA,ECDHE-RSA-AES256-SHA,AES128-GCM-SHA256,AES256-GCM-SHA384,AES128-SHA,AES256-SHA',
@@ -399,7 +396,7 @@ class Curl {
 		}
 		else if (browser === 'safari') {
 			if (this.constructor.hasCurlImpersonateChrome()) {
-				this.cliCommand('curl-impersonate-chrome');
+				this.cliCommand(getCurlImpersonate());
 				this.cliOptions([
 					'--ciphers',
 					'TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384:TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256:TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256:TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384:TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256:TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256:TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA:TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA:TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA:TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA:TLS_RSA_WITH_AES_256_GCM_SHA384:TLS_RSA_WITH_AES_128_GCM_SHA256:TLS_RSA_WITH_AES_256_CBC_SHA:TLS_RSA_WITH_AES_128_CBC_SHA:TLS_ECDHE_ECDSA_WITH_3DES_EDE_CBC_SHA:TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA:TLS_RSA_WITH_3DES_EDE_CBC_SHA',
@@ -422,29 +419,6 @@ class Curl {
 				Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
 				'Accept-Language': 'en-GB,en-US;q=0.9,en;q=0.8',
 				'Accept-Encoding': 'gzip, deflate, br',
-			});
-		}
-		else if (browser === 'firefox') {
-			if (this.constructor.hasCurlImpersonateFirefox()) {
-				this.cliCommand('curl-impersonate-ff');
-				this.cliOptions([
-					'--ciphers',
-					'aes_128_gcm_sha_256,chacha20_poly1305_sha_256,aes_256_gcm_sha_384,ecdhe_ecdsa_aes_128_gcm_sha_256,ecdhe_rsa_aes_128_gcm_sha_256,ecdhe_ecdsa_chacha20_poly1305_sha_256,ecdhe_rsa_chacha20_poly1305_sha_256,ecdhe_ecdsa_aes_256_gcm_sha_384,ecdhe_rsa_aes_256_gcm_sha_384,ecdhe_ecdsa_aes_256_sha,ecdhe_ecdsa_aes_128_sha,ecdhe_rsa_aes_128_sha,ecdhe_rsa_aes_256_sha,rsa_aes_128_gcm_sha_256,rsa_aes_256_gcm_sha_384,rsa_aes_128_sha,rsa_aes_256_sha',
-					'--http2',
-					'--compressed',
-				]);
-			}
-			this.headers({
-				'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/117.0',
-				Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-				'Accept-Language': 'en-US,en;q=0.5',
-				'Accept-Encoding': 'gzip, deflate, br',
-				'Upgrade-Insecure-Requests': '1',
-				'Sec-Fetch-Dest': 'document',
-				'Sec-Fetch-Mode': 'navigate',
-				'Sec-Fetch-Site': 'none',
-				'Sec-Fetch-User': '?1',
-				TE: 'Trailers',
 			});
 		}
 		return this;
